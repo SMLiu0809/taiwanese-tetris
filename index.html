@@ -64,7 +64,6 @@
             box-shadow: var(--shadow);
         }
 
-        /* 畫面切換 */
         .screen {
             display: none;
             width: 100%;
@@ -76,7 +75,6 @@
             align-items: center;
         }
 
-        /* 首頁設計 */
         .home-form {
             margin: 20px 0;
             width: 100%;
@@ -120,7 +118,6 @@
             background-color: #A34A29;
         }
 
-        /* 遊戲介面 */
         .game-info {
             display: flex;
             justify-content: space-between;
@@ -171,7 +168,6 @@
             border-radius: 4px;
         }
 
-        /* 觸控控制按鈕 (長者與行動裝置友善) */
         .touch-controls {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -195,7 +191,6 @@
             color: white;
         }
 
-        /* 彈窗對話框 */
         .modal {
             display: none;
             position: fixed;
@@ -223,20 +218,40 @@
             margin-bottom: 15px;
             font-size: 1.5rem;
         }
-        .snack-desc-item {
+
+        .snack-card-page {
             text-align: left;
             background: #EFEBD9;
-            padding: 10px 14px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            font-size: 1rem;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            min-height: 160px;
         }
-        .snack-desc-item span.snack-title {
+        .snack-card-page .emoji-icon {
+            font-size: 3rem;
+            float: left;
+            margin-right: 15px;
+        }
+        .snack-card-page .title {
+            font-size: 1.3rem;
             font-weight: bold;
             color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .snack-card-page .desc {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: var(--primary);
         }
 
-        /* 測驗題目樣式 */
         .quiz-container {
             text-align: left;
             margin-bottom: 15px;
@@ -275,7 +290,6 @@
             color: #721C24;
         }
 
-        /* 證書頁面 */
         .certificate-box {
             border: 6px double var(--accent);
             padding: 20px;
@@ -310,9 +324,8 @@
         <div id="screen-home" class="screen active">
             <div style="font-size: 4rem; margin: 15px 0;">🧋🥟🍲</div>
             <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">
-                歡迎來到台味俄羅斯方塊！<br>
                 挑戰 10 個關卡，解鎖 23 種經典台灣美食，<br>
-                通過知識測驗，贏取最高榮譽稱號！
+                過關後逐頁品嚐美食故事，最終挑戰隨機知識大考驗！
             </p>
             <div class="home-form">
                 <label for="player-code">請輸入 8 碼美食玩家代號：</label>
@@ -343,7 +356,6 @@
                 </div>
             </div>
 
-            <!-- 觸控按鈕 -->
             <div class="touch-controls">
                 <button class="ctrl-btn" onclick="playerMove(-1)">◀ 左移</button>
                 <button class="ctrl-btn" onclick="playerRotate()">🔄 旋轉</button>
@@ -355,43 +367,42 @@
 
     </div>
 
-    <!-- 彈窗：美食說明 (隨關卡遞增) -->
+    <!-- 彈窗：過關美食說明頁 -->
     <div id="modal-snack" class="modal">
         <div class="modal-content">
             <h2 id="snack-modal-title">🎉 第 1 關通關成功！</h2>
-            <p style="margin-bottom: 15px; font-size: 1.05rem;">恭喜過關！為您解鎖以下在地美食知識：</p>
-            <div id="snack-list-container"></div>
-            <button class="btn" onclick="openQuizModal()">進行知識大考驗 ➔</button>
+            <div class="pagination-bar">
+                <button class="btn" style="padding: 6px 12px; font-size:0.9rem;" onclick="changeSnackPage(-1)">◀ 上一頁</button>
+                <span id="page-indicator">第 1 頁 / 共 1 頁</span>
+                <button class="btn" style="padding: 6px 12px; font-size:0.9rem;" onclick="changeSnackPage(1)">下一頁 ▶</button>
+            </div>
+            <div id="snack-page-container" class="snack-card-page"></div>
+            <button id="snack-next-action-btn" class="btn" onclick="handleSnackModalFinish()">進入下一關 ➔</button>
         </div>
     </div>
 
-    <!-- 彈窗：10題隨機測驗 -->
+    <!-- 彈窗：第 10 關通關後的 10 題隨機考驗 -->
     <div id="modal-quiz" class="modal">
         <div class="modal-content">
-            <h2>🧠 台灣美食知識大考驗</h2>
+            <h2>🧠 台灣美食終極知識大考驗</h2>
             <p id="quiz-progress" style="margin-bottom: 10px; font-weight: bold; color: var(--accent);">題目 1 / 10</p>
-            <div class="quiz-container" id="quiz-box">
-                <!-- 題目動態載入 -->
-            </div>
+            <div class="quiz-container" id="quiz-box"></div>
             <button id="quiz-next-btn" class="btn" style="display:none;" onclick="nextQuizQuestion()">下一題</button>
         </div>
     </div>
 
-    <!-- 彈窗：遊戲結束 / 通關證書 -->
+    <!-- 彈窗：榮譽證書 -->
     <div id="modal-cert" class="modal">
         <div class="modal-content">
             <div class="certificate-box">
                 <div class="cert-title">🏆 台灣美食榮譽證書 🏆</div>
-                <div class="cert-body" id="cert-content">
-                    <!-- 證書內容 -->
-                </div>
+                <div class="cert-body" id="cert-content"></div>
             </div>
             <button class="btn btn-accent" onclick="location.reload()">重新挑戰遊戲</button>
         </div>
     </div>
 
     <script>
-        // ================= 23種台灣小吃資料庫 =================
         const snackDatabase = [
             { name: "珍珠奶茶", emoji: "🧋", desc: "台灣之光，香濃奶茶搭配Q彈黑糖珍珠，風靡全球的國民飲料。" },
             { name: "小籠包", emoji: "🥟", desc: "皮薄湯多、手工捏製 18 折的精緻蒸籠美味。" },
@@ -418,8 +429,7 @@
             { name: "粽子", emoji: "🍙", desc: "竹葉包裹香Q糯米、香菇與鹹蛋黃的傳統美食。" }
         ];
 
-        // ================= 100題美食題庫 (精選 100 題 4 選 1) =================
-        const questionBank = [
+        let baseQuestionBank = [
             { q: "下列哪一項被譽為台灣之光的飲料？", opts: ["珍珠奶茶", "冬瓜茶", "麥茶", "仙草蜜"], ans: 0 },
             { q: "台南知名小吃「棺材板」的主要基底是？", opts: ["厚片吐司", "油條", "燒餅", "割包"], ans: 0 },
             { q: "台灣夜市常見的「大腸包小腸」，大腸是指什麼？", opts: ["糯米腸", "豬大腸", "粉腸", "大腸頭"], ans: 0 },
@@ -429,19 +439,16 @@
             { q: "鳳梨酥的內餡傳統上經常搭配哪種水果熬煮以增加口感？", opts: ["冬瓜", "蘋果", "木瓜", "香蕉"], ans: 0 },
             { q: "吃豬血糕時，通常會均勻裹上一層厚厚的什麼配料？", opts: ["花生粉與香菜", "芝麻與海苔", "黑糖與粉圓", "辣椒醬與蒜泥"], ans: 0 },
             { q: "擔仔麵發源於台灣哪一個歷史文化古城？", opts: ["台南市", "高雄市", "台中市", "台北市"], ans: 0 },
-            { q: "台灣的「臭豆腐」獨特氣味主要來自於？", opts: ["植物與蔬菜自然發酵滷汁", "化學添加物", "特殊香料浸泡", "海鮮醃製"], ans: 0 },
-            // 擴充至豐富題庫 (以下模擬覆蓋 100 題邏輯，隨機抽 10 題)
+            { q: "台灣的「臭豆腐」獨特氣味主要來自於？", opts: ["植物與蔬菜自然發酵滷汁", "化學添加物", "特殊香料浸泡", "海鮮醃製"], ans: 0 }
         ];
-        // 為了確保題庫完整度，自動動態補齊 100 題基礎題庫
         for (let i = 11; i <= 100; i++) {
-            questionBank.push({
+            baseQuestionBank.push({
                 q: `關於台灣在地美食與夜市文化考察第 ${i} 題：下列敘述何者正確？`,
                 opts: ["皆為台灣在地特色飲食", "僅存於特定山區", "源自外國進口速食", "現代才發明的創新料理"],
                 ans: 0
             });
         }
 
-        // ================= Web Audio API 音效系統 =================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             if (!audioCtx) return;
@@ -487,7 +494,6 @@
             }
         }
 
-        // ================= 遊戲核心變數 =================
         const canvas = document.getElementById('tetris');
         const ctx = canvas.getContext('2d');
         const nextCanvas = document.getElementById('next-canvas');
@@ -501,7 +507,7 @@
         let score = 0;
         let level = 1;
         let linesClearedInLevel = 0;
-        const linesPerLevel = 5; // 每關清除5行過關
+        const linesPerLevel = 5;
         let playerCode = "TAIWAN88";
         let gameInterval = null;
         let dropInterval = 800;
@@ -509,19 +515,19 @@
 
         let currentPiece = null;
         let nextPiece = null;
+        let currentSnackPages = [];
+        let currentSnackPageIndex = 0;
 
-        // 方塊形狀定義
         const SHAPES = [
-            [[1,1,1,1]], // I
-            [[1,1],[1,1]], // O
-            [[0,1,0],[1,1,1]], // T
-            [[0,1,1],[1,1,0]], // S
-            [[1,1,0],[0,1,1]], // Z
-            [[1,0,0],[1,1,1]], // J
-            [[0,0,1],[1,1,1]]  // L
+            [[1,1,1,1]],
+            [[1,1],[1,1]],
+            [[0,1,0],[1,1,1]],
+            [[0,1,1],[1,1,0]],
+            [[1,1,0],[0,1,1]],
+            [[1,0,0],[1,1,1]],
+            [[0,0,1],[1,1,1]]
         ];
 
-        // 取得當前關卡可用的方塊種類數 (第1關5種，每關+2，最高23種)
         function getAvailableSnackCount() {
             return Math.min(23, 5 + (level - 1) * 2);
         }
@@ -529,7 +535,7 @@
         function createPiece() {
             const maxSnack = getAvailableSnackCount();
             const shapeIndex = Math.floor(Math.random() * SHAPES.length);
-            const snackIndex = Math.floor(Math.random() * maxSnack) + 1; // 1 ~ maxSnack
+            const snackIndex = Math.floor(Math.random() * maxSnack) + 1;
             return {
                 shape: SHAPES[shapeIndex],
                 snackId: snackIndex,
@@ -538,7 +544,6 @@
             };
         }
 
-        // ================= 遊戲初始化與主循環 =================
         function startGame() {
             const inputVal = document.getElementById('player-code').value.trim();
             if (inputVal) playerCode = inputVal;
@@ -585,7 +590,6 @@
                 currentPiece = nextPiece;
                 nextPiece = createPiece();
                 if (checkCollision()) {
-                    // 遊戲結束
                     clearInterval(gameInterval);
                     showCertificate(false);
                 }
@@ -626,7 +630,7 @@
                     board.splice(r, 1);
                     board.unshift(Array(COLS).fill(0));
                     linesCleared++;
-                    r++; // 檢查同一行
+                    r++;
                 }
             }
 
@@ -637,16 +641,14 @@
                 updateUI();
 
                 if (linesClearedInLevel >= linesPerLevel) {
-                    // 達成過關！
                     isPaused = true;
                     clearInterval(gameInterval);
                     playSound('win');
-                    showSnackExplanationModal();
+                    openSnackExplanationModal();
                 }
             }
         }
 
-        // ================= 玩家操作 =================
         function playerMove(dir) {
             currentPiece.x += dir;
             if (checkCollision()) {
@@ -664,7 +666,7 @@
             
             currentPiece.shape = rotated;
             if (checkCollision()) {
-                currentPiece.shape = originalShape; // 恢復
+                currentPiece.shape = originalShape;
             } else {
                 playSound('rotate');
             }
@@ -700,7 +702,6 @@
             draw();
         }
 
-        // 鍵盤監聽
         window.addEventListener('keydown', e => {
             if (!document.getElementById('screen-game').classList.contains('active') || isPaused) return;
             if (e.key === 'ArrowLeft') playerMove(-1);
@@ -710,12 +711,10 @@
             else if (e.code === 'Space') { e.preventDefault(); playerDropInstant(); }
         });
 
-        // ================= 繪製邏輯 =================
         function draw() {
             ctx.fillStyle = '#FFFDF9';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 畫棋盤格線與方塊
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     if (board[r][c]) {
@@ -727,7 +726,6 @@
                 }
             }
 
-            // 畫當前掉落方塊
             if (currentPiece) {
                 for (let r = 0; r < currentPiece.shape.length; r++) {
                     for (let c = 0; c < currentPiece.shape[r].length; c++) {
@@ -738,7 +736,6 @@
                 }
             }
 
-            // 畫下一個方塊預覽
             nextCtx.fillStyle = '#FFF';
             nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
             if (nextPiece) {
@@ -767,39 +764,76 @@
             targetCtx.fillText(snack.emoji, x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2);
         }
 
-        // ================= 過關機制與說明遞增 =================
-        function showSnackExplanationModal() {
+        function openSnackExplanationModal() {
             document.getElementById('snack-modal-title').textContent = `🎉 第 ${level} 關通關成功！`;
-            const container = document.getElementById('snack-list-container');
-            container.innerHTML = '';
-
-            // 第 1 關提供 1 種，第 2 關 2 種... 第 10 關 10 種
-            const countTootip = level;
+            const count = level;
             const availableSnacks = snackDatabase.slice(0, getAvailableSnackCount());
-            // 隨機抽取出對應數量的美食介紹
             const shuffled = [...availableSnacks].sort(() => 0.5 - Math.random());
-            const selectedSnacks = shuffled.slice(0, countTootip);
+            currentSnackPages = shuffled.slice(0, count);
+            currentSnackPageIndex = 0;
 
-            selectedSnacks.forEach(s => {
-                const div = document.createElement('div');
-                div.className = 'snack-desc-item';
-                div.innerHTML = `<span class="snack-title">${s.emoji} ${s.name}</span>：${s.desc}`;
-                container.appendChild(div);
-            });
-
+            renderSnackPage();
             document.getElementById('modal-snack').style.display = 'flex';
         }
 
-        // ================= 100題隨機測驗系統 =================
+        function renderSnackPage() {
+            const snack = currentSnackPages[currentSnackPageIndex];
+            document.getElementById('page-indicator').textContent = `第 ${currentSnackPageIndex + 1} 頁 / 共 ${currentSnackPages.length} 頁`;
+            
+            const container = document.getElementById('snack-page-container');
+            container.innerHTML = `
+                <div class="emoji-icon">${snack.emoji}</div>
+                <div class="title">${snack.name}</div>
+                <div class="desc">${snack.desc}</div>
+            `;
+
+            const btn = document.getElementById('snack-next-action-btn');
+            if (currentSnackPageIndex === currentSnackPages.length - 1) {
+                btn.textContent = (level === 10) ? "進入終極知識大考驗 🧠" : "進入下一關 ➔";
+            } else {
+                btn.textContent = "下一頁說明 ➔";
+            }
+        }
+
+        function changeSnackPage(direction) {
+            currentSnackPageIndex += direction;
+            if (currentSnackPageIndex < 0) currentSnackPageIndex = 0;
+            if (currentSnackPageIndex >= currentSnackPages.length) {
+                currentSnackPageIndex = currentSnackPages.length - 1;
+                handleSnackModalFinish();
+                return;
+            }
+            renderSnackPage();
+        }
+
+        function handleSnackModalFinish() {
+            if (currentSnackPageIndex < currentSnackPages.length - 1) {
+                currentSnackPageIndex++;
+                renderSnackPage();
+                return;
+            }
+
+            document.getElementById('modal-snack').style.display = 'none';
+
+            if (level >= 10) {
+                openQuizModal();
+            } else {
+                level++;
+                linesClearedInLevel = 0;
+                dropInterval = Math.max(200, dropInterval - 60);
+                updateUI();
+                isPaused = false;
+                if (gameInterval) clearInterval(gameInterval);
+                gameInterval = setInterval(gameLoop, dropInterval);
+            }
+        }
+
         let activeQuizList = [];
         let currentQuizIndex = 0;
         let quizCorrectCount = 0;
 
         function openQuizModal() {
-            document.getElementById('modal-snack').style.display = 'none';
-
-            // 重新洗牌 100 題題庫，隨機取 10 題
-            const shuffledBank = [...questionBank].sort(() => 0.5 - Math.random());
+            const shuffledBank = [...baseQuestionBank].sort(() => 0.5 - Math.random());
             activeQuizList = shuffledBank.slice(0, 10);
             currentQuizIndex = 0;
             quizCorrectCount = 0;
@@ -810,9 +844,8 @@
 
         function renderQuizQuestion() {
             if (currentQuizIndex >= activeQuizList.length) {
-                // 測驗結束，進入下一關或通關
                 document.getElementById('modal-quiz').style.display = 'none';
-                advanceLevelOrFinish();
+                showCertificate(true);
                 return;
             }
 
@@ -822,7 +855,6 @@
             const box = document.getElementById('quiz-box');
             box.innerHTML = `<div class="quiz-question">${currentQuizIndex + 1}. ${qData.q}</div>`;
 
-            // 洗牌選項
             const optsWithIndex = qData.opts.map((opt, idx) => ({ opt, originalIdx: idx }));
             const shuffledOpts = optsWithIndex.sort(() => 0.5 - Math.random());
 
@@ -837,19 +869,48 @@
             document.getElementById('quiz-next-btn').style.display = 'none';
         }
 
+        // ================= 測驗答對/答錯邏輯 =================
         function handleQuizAnswer(isCorrect, selectedBtn) {
             const options = document.querySelectorAll('.quiz-option');
             options.forEach(btn => btn.disabled = true);
+
+            const box = document.getElementById('quiz-box');
 
             if (isCorrect) {
                 selectedBtn.classList.add('correct');
                 quizCorrectCount++;
                 score += 200;
+
+                // 答對時立即回應正確
+                const correctMsg = document.createElement('div');
+                correctMsg.style.cssText = "color: #28A745; font-weight: bold; margin-top: 10px; font-size: 1.1rem; text-align: center;";
+                correctMsg.textContent = "✔️ 正確！";
+                box.appendChild(correctMsg);
+
+                document.getElementById('quiz-next-btn').style.display = 'block';
             } else {
                 selectedBtn.classList.add('wrong');
-            }
 
-            document.getElementById('quiz-next-btn').style.display = 'block';
+                // 答錯時回覆指定訊息並跳回第一關重來
+                box.innerHTML = `
+                    <div style="color: var(--accent); font-size: 1.2rem; font-weight: bold; margin: 20px 0; text-align: center;">
+                        ❌ 你對台灣美食還要深入了解
+                    </div>
+                    <p style="text-align: center; margin-bottom: 20px; color: var(--text-main);">不要放棄，讓我們從第一關重新挑戰！</p>
+                `;
+                document.getElementById('quiz-next-btn').style.display = 'none';
+
+                const restartBtn = document.createElement('button');
+                restartBtn.className = 'btn btn-accent';
+                restartBtn.textContent = '返回第一關重來 ➔';
+                restartBtn.style.display = 'block';
+                restartBtn.style.margin = '0 auto';
+                restartBtn.onclick = () => {
+                    document.getElementById('modal-quiz').style.display = 'none';
+                    resetGame(); // 重設為第一關
+                };
+                box.appendChild(restartBtn);
+            }
             updateUI();
         }
 
@@ -858,52 +919,20 @@
             renderQuizQuestion();
         }
 
-        function advanceLevelOrFinish() {
-            if (level >= 10) {
-                // 通關 10 關！頒發證書
-                showCertificate(true);
-            } else {
-                level++;
-                linesClearedInLevel = 0;
-                dropInterval = Math.max(200, dropInterval - 60);
-                updateUI();
-                isPaused = false;
-                if (gameInterval) clearInterval(gameInterval);
-                gameInterval = setInterval(gameLoop, dropInterval);
-            }
-        }
-
-        // ================= 頒發十級榮譽稱號與證書 =================
         function showCertificate(isVictory) {
             document.getElementById('modal-cert').style.display = 'flex';
             const content = document.getElementById('cert-content');
 
-            let titleName = "夜市尋味生";
-            let desc = "初窺門徑，對台灣小吃充滿好奇的學徒。";
-
-            if (isVictory) {
-                if (score >= 8000 && quizCorrectCount >= 9) {
-                    titleName = "🎖️ 台灣美食總舖師";
-                    desc = "極速通關與全知答題者，至高無上的台灣美食宗師！";
-                } else if (score >= 6000) {
-                    titleName = "👑 國民美食家";
-                    desc = "頂尖速度與全方位知識的完美結合。";
-                } else if (level >= 10) {
-                    titleName = "🏆 台灣食神榜";
-                    desc = "成功制霸十關與百大小吃知識庫！";
-                }
-            } else {
-                titleName = "🏮 巷弄品味家";
-                desc = "雖中途挑戰結束，但已充分體驗台灣夜市的迷人魅力！";
-            }
+            let titleName = "🎖️ 台灣美食總舖師";
+            let desc = "極速通關與全知答題者，至高無上的台灣美食宗師！";
 
             content.innerHTML = `
                 特此證明：玩家代號 <b style="color:var(--primary); font-size:1.2rem;">${playerCode}</b><br>
-                在台味俄羅斯方塊挑戰中表現優異！<br><br>
+                成功制霸 10 關並通過所有知識考驗！<br><br>
                 獲得最高榮譽稱號：<br>
                 <span style="font-size: 1.4rem; font-weight: bold; color: var(--accent);">${titleName}</span><br>
                 <p style="font-size: 0.95rem; color: #6B5B52; margin-top: 5px;">${desc}</p><br>
-                最終得分：<b>${score}</b> 分 | 答對題數：<b>${quizCorrectCount} / 10</b> 題
+                最終得分：<b>${score}</b> 分 | 測驗全數答對！
             `;
         }
     </script>
